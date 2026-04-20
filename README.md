@@ -38,6 +38,7 @@ This project predicts such users based on their activity and engagement patterns
 ---
 
 ## 📁 Project Structure
+```
 OTT_CHURN_PREDICTION/
 │
 ├── static/
@@ -54,7 +55,7 @@ OTT_CHURN_PREDICTION/
 ├── app.py
 ├── sample_churn_data.csv
 └── README.md
-
+```
 ---
 
 ## ▶️ How to Run the Project
@@ -63,37 +64,49 @@ OTT_CHURN_PREDICTION/
 ```bash
 git clone https://github.com/your-username/ott-churn-prediction.git
 cd ott-churn-prediction
-
-2️⃣ Install dependencies
+```
+### 2️⃣ Install dependencies
+```
 pip install -r requirements.txt
-
-3️⃣ Run Flask app
+```
+### 3️⃣ Run Flask app
+```
 python app.py
-4️⃣ Open in browser
+```
+### 4️⃣ Open in browser
+```
 http://127.0.0.1:5000/
+```
 
-📌 Input Format
+---
+### 📌 Input Format
 Upload a CSV file with the same structure as training data
 Required columns include:
 age, gender, subscription_type, watch_hours
 last_login_days, region, device
 payment_method, etc.
 
-📈 Sample Output
+---
+
+### 📈 Sample Output
 Churn: 6%
 Non-Churn: 94%
 
-🔮 Future Enhancements
+---
+
+### 🔮 Future Enhancements
 Support Excel/PDF input with auto parsing
 User authentication (login/register)
 Model improvement with deep learning
 Deployment on cloud (AWS/Render)
 
-👩‍💻 Author
+---
 
+### 👩‍💻 Author
 Krushnali
 Engineering Student | Aspiring Data Scientist
 
-⭐ If you like this project
+---
 
+### ⭐ If you like this project
 Give it a ⭐ on GitHub and share your feedback!
