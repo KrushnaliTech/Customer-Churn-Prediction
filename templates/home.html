@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTT Churn Prediction | Krushnali</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <a href="#">🏠 Home</a>
+        <a href="#">📈 Predict</a>
+        <a href="#">📊 Dashboard</a>
+        <a href="#">📝 Register</a>
+        <a href="#">🔐 Login</a>
+    </div>
+
+    <!-- Toggle Menu -->
+    <div class="menu-toggle" id="menu-btn" onclick="toggleMenu()">☰</div>
+
+    <!-- Content -->
+    <div class="content" id="content">
+        <div class="hero">
+            <h1>OTT Churn Prediction</h1>
+            <p>Predict customer churn and analyze engagement insights for OTT platforms.</p>
+            <button class="cta-button" onclick="scrollToUpload()">Upload & Predict Churn</button>
+        </div>
+
+        <div class="upload-section" id="upload">
+            <h2>Upload CSV to Predict Churn</h2>
+            <input type="file" id="csvInput" accept=".csv">
+            <br>
+            <button class="cta-button" onclick="showResult()">Predict</button>
+            <div class="result-box" id="resultBox">Result will appear here...</div>
+        </div>
+
+        <div id="chart-container">
+            <canvas id="churnChart"></canvas>
+        </div>
+    </div>
+
+    <footer>© 2025 OTT Churn Prediction by Krushnali. All Rights Reserved.</footer>
+
+    <script>
+        // Sidebar Toggle
+        function toggleMenu() {
+            const sidebar = document.getElementById("sidebar");
+            const content = document.getElementById("content");
+            const menuBtn = document.getElementById("menu-btn");
+
+            sidebar.classList.toggle("active");
+            content.classList.toggle("active");
+
+            // Change icon ☰ ↔ ✖
+            if (sidebar.classList.contains("active")) {
+                menuBtn.innerHTML = "✖";
+                menuBtn.style.backgroundColor = "#ff5f6d";
+            } else {
+                menuBtn.innerHTML = "☰";
+                menuBtn.style.backgroundColor = "#004e92";
+            }
+        }
+
+        // Smooth Scroll
+        function scrollToUpload() {
+            document.getElementById("upload").scrollIntoView({ behavior: "smooth" });
+        }
+
+        // Handle CSV upload and call Flask backend
+        async function showResult() {
+            const resultBox = document.getElementById("resultBox");
+            const fileInput = document.getElementById("csvInput");
+
+            if (fileInput.files.length === 0) {
+                alert("Please select a CSV file first.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch("/predict", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    resultBox.innerHTML = `<span style="color:red;">Error: ${errorText}</span>`;
+                    return;
+                }
+
+                const data = await response.json();
+
+                const churnPercent = Math.round((data.churn / (data.churn + data.non_churn)) * 100);
+                const nonChurn = 100 - churnPercent;
+
+                resultBox.innerHTML = `Churn Probability: <b>${churnPercent}%</b> | Non-Churn: <b>${nonChurn}%</b>`;
+                updateChart(churnPercent, nonChurn);
+
+            } catch (error) {
+                console.error("Error:", error);
+                resultBox.innerHTML = `<span style="color:red;">Error occurred while predicting.</span>`;
+            }
+        }
+
+        // Pie Chart
+        let churnChart;
+        function updateChart(churn, nonChurn) {
+            const ctx = document.getElementById("churnChart").getContext("2d");
+
+            if (churnChart) churnChart.destroy();
+
+            churnChart = new Chart(ctx, {
+                type: "pie",
+                data: {
+                    labels: ["Churn", "Non-Churn"],
+                    datasets: [{
+                        data: [churn, nonChurn],
+                        backgroundColor: ["#ff5f6d", "#004e92"],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: "bottom" },
+                        title: { display: true, text: "Churn vs Non-Churn Distribution" }
+                    }
+                }
+            });
+        }
+
+    </script>
+</body>
+
+</html>
